@@ -236,11 +236,11 @@ static void Hardware_init(void)
   BSP_XSPI_RAM_Init(0);
   BSP_XSPI_RAM_EnableMemoryMappedMode(0);
 
-  BSP_XSPI_NOR_Init_t NOR_Init;
-  NOR_Init.InterfaceMode = BSP_XSPI_NOR_OPI_MODE;
-  NOR_Init.TransferRate = BSP_XSPI_NOR_DTR_TRANSFER;
-  BSP_XSPI_NOR_Init(0, &NOR_Init);
-  BSP_XSPI_NOR_EnableMemoryMappedMode(0);
+  // BSP_XSPI_NOR_Init_t NOR_Init;
+  // NOR_Init.InterfaceMode = BSP_XSPI_NOR_OPI_MODE;
+  // NOR_Init.TransferRate = BSP_XSPI_NOR_DTR_TRANSFER;
+  // BSP_XSPI_NOR_Init(0, &NOR_Init);
+  // BSP_XSPI_NOR_EnableMemoryMappedMode(0);
   PRINTF_END("External Memory Init");
 
   // init SD card
