@@ -57,6 +57,7 @@ XSPI_HandleTypeDef hxspi2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void NPURam_enable(void);
 static void MX_XSPI2_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -103,6 +104,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  NPURam_enable();
   MX_XSPI2_Init();
   MX_EXTMEM_MANAGER_Init();
   /* USER CODE BEGIN 2 */
@@ -306,6 +308,30 @@ void SystemClock_Config(void)
   // __HAL_RCC_SYSCFG_CLK_ENABLE();
   HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_HSI, RCC_MCODIV_1);
 }
+
+static void NPURam_enable(void)
+{
+  __HAL_RCC_NPU_CLK_ENABLE();
+  __HAL_RCC_NPU_FORCE_RESET();
+  __HAL_RCC_NPU_RELEASE_RESET();
+
+  /* Enable NPU RAMs (4x448KB) */
+  __HAL_RCC_AXISRAM3_MEM_CLK_ENABLE();
+  __HAL_RCC_AXISRAM4_MEM_CLK_ENABLE();
+  __HAL_RCC_AXISRAM5_MEM_CLK_ENABLE();
+  __HAL_RCC_AXISRAM6_MEM_CLK_ENABLE();
+  __HAL_RCC_RAMCFG_CLK_ENABLE();
+  RAMCFG_HandleTypeDef hramcfg = {0};
+  hramcfg.Instance =  RAMCFG_SRAM3_AXI;
+  HAL_RAMCFG_EnableAXISRAM(&hramcfg);
+  hramcfg.Instance =  RAMCFG_SRAM4_AXI;
+  HAL_RAMCFG_EnableAXISRAM(&hramcfg);
+  hramcfg.Instance =  RAMCFG_SRAM5_AXI;
+  HAL_RAMCFG_EnableAXISRAM(&hramcfg);
+  hramcfg.Instance =  RAMCFG_SRAM6_AXI;
+  HAL_RAMCFG_EnableAXISRAM(&hramcfg);
+}
+
 
 /**
   * @brief XSPI2 Initialization Function

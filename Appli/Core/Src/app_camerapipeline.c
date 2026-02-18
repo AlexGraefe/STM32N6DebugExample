@@ -140,7 +140,7 @@ void CameraPipeline_Init(uint32_t *lcd_bg_width, uint32_t *lcd_bg_height, int se
          cam_conf.fps);
 
   DCMIPP_PipeInitDisplay(&cam_conf, lcd_bg_width, lcd_bg_height);
-  // DCMIPP_PipeInitSecondary(secondary_pipe_width, secondary_pipe_height);
+  DCMIPP_PipeInitSecondary(secondary_pipe_width, secondary_pipe_height);
 }
 
 void CameraPipeline_DeInit(void)
@@ -162,6 +162,7 @@ void CameraPipeline_SecondaryPipe_Start(uint8_t *secondary_pipe_dst1, uint8_t *s
   int ret;
   ret = CMW_CAMERA_DoubleBufferStart(DCMIPP_PIPE1, secondary_pipe_dst1, secondary_pipe_dst2, cam_mode);
   // ret = CMW_CAMERA_Start(DCMIPP_PIPE1, secondary_pipe_dst, cam_mode);
+  printf("%d\r\n", ret);
   assert(ret == CMW_ERROR_NONE);
 }
 

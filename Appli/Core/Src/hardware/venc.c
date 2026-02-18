@@ -41,8 +41,8 @@ int Encode_frame(uint32_t img_addr){
   {
   case H264ENC_FRAME_READY:
     /*save stream */
-    // printf("encoded frame %d - size : %d bytes\n", frame_nb, encOut.streamSize);
-
+    printf("encoded frame %d - size : %d bytes\n", frame_nb, encOut.streamSize);
+    // SCB_CleanInvalidateDCache_by_Addr(encIn.pOutBuf, encOut.streamSize);
     if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
     {
       printf("error saving stream frame %d\n", frame_nb);

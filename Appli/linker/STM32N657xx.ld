@@ -33,7 +33,7 @@
 
 /* Entry Point */
 ENTRY(Reset_Handler)
-_Min_Heap_Size = 0x800;      /* required amount of heap  */
+_Min_Heap_Size = 0x170000;      /* required amount of heap  */
 _Min_Stack_Size = 0x800; /* required amount of stack */
 
 
@@ -41,7 +41,7 @@ _Min_Stack_Size = 0x800; /* required amount of stack */
 MEMORY
 {
   ROM    (xrw)    : ORIGIN = 0x70100400,   LENGTH = 2048K
-  RAM    (xrw)    : ORIGIN = 0x34000000,   LENGTH = 2048K
+  RAM    (rw)     : ORIGIN = 0x34000000,   LENGTH = 3750K
 }
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
@@ -186,6 +186,15 @@ SECTIONS
     KEEP(*(.noncacheable))
     . = ALIGN(8);
     __enoncacheable = .;  /* create symbol for end of section */
+  } > RAM
+
+  .axisram1 (NOLOAD):
+  {
+    . = ALIGN(8);
+    __saxisram1 = .;/* create symbol for start of section */
+    KEEP(*(.axisram1))
+    . = ALIGN(8);
+    __eaxisram1 = .;  /* create symbol for end of section */
   } > RAM
 
   /* Uninitialized TLS data section */
