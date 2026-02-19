@@ -6,6 +6,8 @@
 uint32_t sd_buf1[NB_WORDS_TO_WRITE] __NON_CACHEABLE; 
 uint32_t sd_buf2[NB_WORDS_TO_WRITE] __NON_CACHEABLE;
 
+uint32_t starting_tick = 0;
+
 uint32_t *curr_buf = sd_buf1;
 size_t buf_index = 0;
 size_t SD_index = 0;
@@ -22,14 +24,15 @@ int save_stream(uint32_t offset, uint32_t * buf, size_t size){
   size += 15; /* Alignment*/
   size = size / sizeof(uint32_t);
   
+  int write_cycles = 0;
   for(int i = 0; i<size; i++){
     curr_buf[buf_index] = buf[i];
     buf_index++;
     /* upload to sd every 512 blocks to limit the impact of access latency */
     if(buf_index >= NB_WORDS_TO_WRITE){
+      starting_tick = HAL_GetTick();
       int32_t res = BSP_SD_WriteBlocks_DMA(0, curr_buf, SD_index, NB_BLOCKS_TO_WRITE);
       if(res!= BSP_ERROR_NONE){
-        printf("%d\n", res);
         err = -1;
       }
       SD_index+=NB_BLOCKS_TO_WRITE;
@@ -82,6 +85,5 @@ void SD_Card_Init(void)
   /* wait for erase operation to be done */
   while(BSP_SD_GetCardState(0) != SD_TRANSFER_OK);
 #endif
-  
 
 }

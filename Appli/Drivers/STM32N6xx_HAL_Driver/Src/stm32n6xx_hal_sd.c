@@ -1393,6 +1393,7 @@ HAL_StatusTypeDef HAL_SD_WriteBlocks_DMA(SD_HandleTypeDef *hsd, const uint8_t *p
       hsd->Context = (SD_CONTEXT_WRITE_MULTIPLE_BLOCK | SD_CONTEXT_DMA);
       /* Write Multi Block command */
       errorstate = SDMMC_CmdWriteMultiBlock(hsd->Instance, add);
+            printf("d%d\n", errorstate);
     }
     else
     {
@@ -2347,6 +2348,7 @@ HAL_StatusTypeDef HAL_SD_GetCardInfo(const SD_HandleTypeDef *hsd, HAL_SD_CardInf
   pCardInfo->BlockSize    = (uint32_t)(hsd->SdCard.BlockSize);
   pCardInfo->LogBlockNbr  = (uint32_t)(hsd->SdCard.LogBlockNbr);
   pCardInfo->LogBlockSize = (uint32_t)(hsd->SdCard.LogBlockSize);
+  pCardInfo->CardSpeed    = (uint32_t)(hsd->SdCard.CardSpeed);
 
   return HAL_OK;
 }

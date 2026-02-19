@@ -72,6 +72,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32n6570_discovery_sd.h"
+#include <stdio.h>
 
 /** @addtogroup BSP
   * @{
@@ -324,9 +325,9 @@ __weak HAL_StatusTypeDef MX_SDMMC1_SD_Init(SD_HandleTypeDef *hsd)
   hsd->Instance                 = SDMMC2;
   hsd->Init.ClockEdge           = SDMMC_CLOCK_EDGE_RISING;
   hsd->Init.ClockPowerSave      = SDMMC_CLOCK_POWER_SAVE_DISABLE;
-  hsd->Init.BusWide             = SDMMC_BUS_WIDE_1B;
+  hsd->Init.BusWide             = SDMMC_BUS_WIDE_4B;
   hsd->Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd->Init.ClockDiv            = SDMMC_NSpeed_CLK_DIV;
+  hsd->Init.ClockDiv            = SDMMC_HSpeed_CLK_DIV;  // SDMMC_NSpeed_CLK_DIV;
 
   /* HAL SD initialization */
   if (HAL_SD_Init(hsd) != HAL_OK)
@@ -786,6 +787,7 @@ void BSP_SD_DETECT_IRQHandler(uint32_t Instance)
   */
 void BSP_SD_IRQHandler(uint32_t Instance)
 {
+  printf("IRQ\n");
   HAL_SD_IRQHandler(&hsd_sdmmc[Instance]);
 }
 

@@ -23,6 +23,8 @@
 #include "cmw_camera.h"
 #include "stm32n6570_discovery_sd.h"
 
+extern uint32_t starting_tick;
+
 /**
   * @brief   This function handles NMI exception.
   * @param  None
@@ -161,5 +163,7 @@ void DCMIPP_IRQHandler(void)
 
 void SDMMC2_IRQHandler(void)
 {
+  uint32_t ending_tick = HAL_GetTick();
+  printf("SDMMC2 IRQ, time since start: %lu ms\n", ending_tick - starting_tick);
   BSP_SD_IRQHandler(0);
 }

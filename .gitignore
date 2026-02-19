@@ -296,3 +296,5 @@ __marimo__/
 st_ai_output/
 st_ai_ws/
 generated_files/
+
+uart_logs/

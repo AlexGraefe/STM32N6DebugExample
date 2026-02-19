@@ -294,11 +294,11 @@ void SystemClock_Config(void)
   RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI1;
   RCC_PeriphCLKInitStruct.Xspi1ClockSelection = RCC_XSPI1CLKSOURCE_HCLK;
 
-  /* XSPI2 kernel clock (ck_ker_xspi1) = HCLK =  200MHz */
+  /* XSPI2 kernel clock (ck_ker_xspi2) = HCLK =  200MHz */
   RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI2;
   RCC_PeriphCLKInitStruct.Xspi2ClockSelection = RCC_XSPI2CLKSOURCE_HCLK;
 
-  /* SDMMC2 kernel clock (sdmmc_ker_ck), we use IC4 which is PLL4 output divided by 8 (800MHz / 8 =  200MHz) */
+  /* SDMMC2 kernel clock (sdmmc_ker_ck), we use IC4 which is PLL4 output divided by 8 (800MHz / 8 =  100MHz) */
   RCC_PeriphCLKInitStruct.ICSelection[RCC_IC4].ClockSelection = RCC_ICCLKSOURCE_PLL1;
   RCC_PeriphCLKInitStruct.ICSelection[RCC_IC4].ClockDivider = 8;
   RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_SDMMC2;
