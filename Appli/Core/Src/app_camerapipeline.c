@@ -134,12 +134,12 @@ void CameraPipeline_Init(uint32_t *lcd_bg_width, uint32_t *lcd_bg_height, int se
   ret = CMW_CAMERA_Init(&cam_conf, NULL);
   assert(ret == CMW_ERROR_NONE);
 
-  printf("Camera initialized: %lux%lu @ %d fps\r\n",
+  printf("Camera initialized: %ux%u @ %d fps\r\n",
          cam_conf.width,
          cam_conf.height,
          cam_conf.fps);
 
-  DCMIPP_PipeInitDisplay(&cam_conf, lcd_bg_width, lcd_bg_height);
+  //DCMIPP_PipeInitDisplay(&cam_conf, lcd_bg_width, lcd_bg_height);
   DCMIPP_PipeInitSecondary(secondary_pipe_width, secondary_pipe_height);
 }
 

@@ -249,6 +249,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32n6xx_hal.h"
+#include <stdio.h>
 
 /** @addtogroup STM32N6xx_HAL_Driver
   * @{
@@ -1416,6 +1417,7 @@ HAL_StatusTypeDef HAL_SD_WriteBlocks_DMA(SD_HandleTypeDef *hsd, const uint8_t *p
   }
   else
   {
+    printf("busy\n");
     return HAL_BUSY;
   }
 }

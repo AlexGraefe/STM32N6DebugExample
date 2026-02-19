@@ -255,10 +255,12 @@ void SystemClock_Config(void)
 
   /* CPU CLock (sysa_ck) = ic1_ck = PLL1 output/ic1_divider = 800 MHz */
   RCC_ClkInitStruct.CPUCLKSource = RCC_CPUCLKSOURCE_IC1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_IC2_IC6_IC11;
   RCC_ClkInitStruct.IC1Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
   RCC_ClkInitStruct.IC1Selection.ClockDivider = 1;
-
+ 
+  // this is SYSSW in the reference manual
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_IC2_IC6_IC11;
+  
   /* AXI Clock (sysb_ck) = ic2_ck = PLL1 output/ic2_divider = 400 MHz */
   RCC_ClkInitStruct.IC2Selection.ClockSelection = RCC_ICCLKSOURCE_PLL1;
   RCC_ClkInitStruct.IC2Selection.ClockDivider = 2;
@@ -272,6 +274,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.IC11Selection.ClockDivider = 1;
 
   /* HCLK = sysb_ck / HCLK divider = 200 MHz */
+  // HPRE in reference manual
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
 
   /* PCLKx = HCLK / PCLKx divider = 200 MHz */
@@ -295,10 +298,11 @@ void SystemClock_Config(void)
   RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_XSPI2;
   RCC_PeriphCLKInitStruct.Xspi2ClockSelection = RCC_XSPI2CLKSOURCE_HCLK;
 
-  RCC_PeriphCLKInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SDMMC2;
-  RCC_PeriphCLKInitStruct.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_IC4;
+  /* SDMMC2 kernel clock (sdmmc_ker_ck), we use IC4 which is PLL4 output divided by 8 (800MHz / 8 =  200MHz) */
   RCC_PeriphCLKInitStruct.ICSelection[RCC_IC4].ClockSelection = RCC_ICCLKSOURCE_PLL1;
-  RCC_PeriphCLKInitStruct.ICSelection[RCC_IC4].ClockDivider = 6;
+  RCC_PeriphCLKInitStruct.ICSelection[RCC_IC4].ClockDivider = 8;
+  RCC_PeriphCLKInitStruct.PeriphClockSelection |= RCC_PERIPHCLK_SDMMC2;
+  RCC_PeriphCLKInitStruct.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_IC4;
 
   if (HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphCLKInitStruct) != HAL_OK)
   {

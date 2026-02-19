@@ -57,11 +57,10 @@ CLASSES_TABLE;
 #define APP_VERSION_STRING "unversioned"
 #endif
 
-
 // venc parts
 #define FRAMERATE 30
-#define VENC_WIDTH    480
-#define VENC_HEIGHT   480
+#define VENC_WIDTH    304
+#define VENC_HEIGHT   300
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
 uint32_t img_addr = 0;
@@ -149,7 +148,6 @@ int main(void)
     // }
     printf("\n");
     Encode_frame(img_addr);
-    HAL_Delay(10);
   }
   /* after encoding a certain nb of frames, end program */
 
