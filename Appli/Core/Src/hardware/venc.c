@@ -74,6 +74,8 @@ int encoder_prepare(uint32_t width, uint32_t height, int framerate, uint32_t * o
 
   H264EncPreProcessingCfg preproc_cfg = {0};
 
+  H264EncCodingCtrl coding_cfg = {0};
+
   /* software workaround for Linemult triggering VENC interrupt. Make it happen as little as possible */
   MODIFY_REG(DCMIPP->P1PPCR, DCMIPP_P1PPCR_LINEMULT_Msk,DCMIPP_MULTILINE_128_LINES);
 
@@ -117,6 +119,25 @@ int encoder_prepare(uint32_t width, uint32_t height, int framerate, uint32_t * o
     printf("error setting preproc data\n");
     return -1;
   }
+
+  // // this is the shortcut, we take the current (initial initialization and change only what we need.)
+  // ret = H264EncGetCodingCtrl(encoder, &coding_cfg);
+  // if (ret != H264ENC_OK)
+  // {
+  //   printf("error getting coding control data\n");
+  //   return -1;
+  // }
+  
+  // coding_cfg.inputLineBufEn = VENC_HW_MODE_ENABLE;  // enable input image control signals.
+  // coding_cfg.inputLineBufLoopBackEn = VENC_HW_MODE_ENABLE; // input buffer loopback mode enable. */
+  // coding_cfg.inputLineBufDepth = VENC_LINE_BUF_DEPTH;  // input buffer depth in mb lines( 1 = 1 macro block ( ie. 16 pixels) */
+  // coding_cfg.inputLineBufHwModeEn = VENC_HW_MODE_ENABLE; // w handshake.
+  // ret = H264EncSetCodingCtrl(encoder, &coding_cfg);
+  // if (ret != H264ENC_OK)
+  // {
+  //   printf("error setting coding control data\n");
+  //   return -1;
+  // }
 
   /*assign buffers to input structure */
   encIn.pOutBuf = output_buffer;
