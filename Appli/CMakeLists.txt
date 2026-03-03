@@ -99,6 +99,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32_lcd_ex.c
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/console_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iris_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/gpio_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iac_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/lcd.c
@@ -137,6 +138,7 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_mdf.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sai.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sai_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cacheaxi.c

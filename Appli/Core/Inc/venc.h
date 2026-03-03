@@ -13,5 +13,7 @@ int encoder_prepare(uint32_t width, uint32_t height, int framerate, uint32_t * o
 int get_frame_nb(void);
 int enc_end_reached();
 int encoder_end(void);
+const uint8_t *encoder_get_last_frame_data(void);
+uint32_t encoder_get_last_frame_size(void);
 
 #endif /* VENC_H */

@@ -19,12 +19,15 @@
 #include <unistd.h>
 
 #include "console_config.h"
+#include "iris_config.h"
 #include "gpio_config.h"
 #include "iac_config.h"
 #include "mylcd.h"
 #include "mpu_config.h"
 #include "sd_card.h"
 #include "security_config.h"
+#include "stm32n6xx_hal.h"
+#include "stm32n6xx_hal_spi.h"
 #include "system_clock_config.h"
 #include "venc.h"
 
@@ -58,8 +61,8 @@ CLASSES_TABLE;
 #endif
 
 // venc parts
-#define FRAMERATE 30
-#define VENC_WIDTH    800
+#define FRAMERATE 1 // 30
+#define VENC_WIDTH    480
 #define VENC_HEIGHT   480
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
@@ -123,13 +126,15 @@ int main(void)
 
   // CameraPipeline_DisplayPipe_Start(get_lcd_bg_buffer(), CMW_MODE_CONTINUOUS);
   CameraPipeline_SecondaryPipe_Start(secondary_pipe_buffer1,secondary_pipe_buffer2, CMW_MODE_CONTINUOUS);  // secondary_pipe_buffer1, secondary_pipe_buffer2, CMW_MODE_CONTINUOUS);
-  // for (uint32_t i = 0; i < VENC_WIDTH*VENC_HEIGHT*2; i++) {
-  //   secondary_pipe_buffer1[i] = i % 256;
-  //   // secondary_pipe_buffer2[i] = 0;
-  // }
-  // SCB_CleanInvalidateDCache_by_Addr(secondary_pipe_buffer1, VENC_WIDTH*VENC_HEIGHT*2);
-  printf("Hello");
   img_addr = (uint32_t) secondary_pipe_buffer1;
+  printf("looool\n");
+
+  while (1) {
+    const uint8_t *encoded_frame = (uint8_t *) output_buffer;
+    uint32_t encoded_frame_size = 40000;
+    iris_transmit(encoded_frame, encoded_frame_size);
+    HAL_Delay(100);
+  }
 
   while (!enc_end_reached())
   {
@@ -148,6 +153,11 @@ int main(void)
     // }
     printf("\n");
     Encode_frame(img_addr);
+
+    const uint8_t *encoded_frame = encoder_get_last_frame_data();
+    uint32_t encoded_frame_size = encoder_get_last_frame_size();
+    iris_transmit(encoded_frame, encoded_frame_size);
+    HAL_Delay(10);
   }
   /* after encoding a certain nb of frames, end program */
 
@@ -209,8 +219,6 @@ static void Hardware_init(void)
   // SystemCoreClockUpdate();
   HAL_Init();
 
-  GPIO_Config();
-
   SCB_EnableICache();
 
 #if defined(USE_DCACHE)
@@ -225,6 +233,10 @@ static void Hardware_init(void)
 
   CONSOLE_Config();
   printf("\n\n\n\n");
+
+  PRINTF_START("IRIS Init");
+  iris_config();
+  PRINTF_END("IRIS Init");
 
   Fuse_Programming();
 

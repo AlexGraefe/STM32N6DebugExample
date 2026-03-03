@@ -13,9 +13,13 @@ H264EncConfig cfg= {0};
 uint32_t output_size = 0;
 EWLLinearMem_t outbuf;
 static int frame_nb = 0;
+static uint8_t *last_frame_data = NULL;
+static uint32_t last_frame_size = 0;
 
 int Encode_frame(uint32_t img_addr){
   int ret = H264ENC_FRAME_READY;
+  last_frame_data = NULL;
+  last_frame_size = 0;
   if(!img_addr){
     printf("Error : NULL image address");
     return -1;
@@ -42,6 +46,8 @@ int Encode_frame(uint32_t img_addr){
   case H264ENC_FRAME_READY:
     /*save stream */
     printf("encoded frame %d - size : %d bytes\n", frame_nb, encOut.streamSize);
+    last_frame_data = (uint8_t *)encIn.pOutBuf;
+    last_frame_size = encOut.streamSize;
     // SCB_CleanInvalidateDCache_by_Addr(encIn.pOutBuf, encOut.streamSize);
     if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
     {
@@ -196,4 +202,14 @@ int enc_end_reached(){
 
 int get_frame_nb(void){
   return frame_nb;
+}
+
+const uint8_t *encoder_get_last_frame_data(void)
+{
+  return last_frame_data;
+}
+
+uint32_t encoder_get_last_frame_size(void)
+{
+  return last_frame_size;
 }
