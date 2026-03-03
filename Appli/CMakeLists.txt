@@ -100,6 +100,7 @@ set(MX_Application_Src
 
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/console_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iris_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/timer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/gpio_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iac_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/lcd.c

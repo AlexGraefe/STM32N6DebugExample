@@ -19,6 +19,7 @@
 #include <unistd.h>
 
 #include "console_config.h"
+#include "timer.h"
 #include "iris_config.h"
 #include "gpio_config.h"
 #include "iac_config.h"
@@ -131,7 +132,7 @@ int main(void)
 
   while (1) {
     const uint8_t *encoded_frame = (uint8_t *) output_buffer;
-    uint32_t encoded_frame_size = 40000;
+    uint32_t encoded_frame_size = 60000;
     iris_transmit(encoded_frame, encoded_frame_size);
     HAL_Delay(100);
   }
@@ -233,6 +234,10 @@ static void Hardware_init(void)
 
   CONSOLE_Config();
   printf("\n\n\n\n");
+
+  PRINTF_START("IRIS Init");
+  Timer_Config();
+  PRINTF_END("IRIS Init");
 
   PRINTF_START("IRIS Init");
   iris_config();

@@ -3,18 +3,18 @@
 #include "stm32n6xx.h"
 #include "stm32n6xx_hal_gpio.h"
 #include <stdint.h>
-#include <string.h>
 #include <stdio.h>
 
+#include "timer.h"
+
 static SPI_HandleTypeDef hspi5;
-static uint32_t iris_frame_index = 0;
 
 static void iris_transmit_raw(const uint8_t *data, uint16_t size)
 {
     HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_RESET);
-    HAL_Delay(1);
+    my_sleep(100);
     HAL_SPI_Transmit(&hspi5, (uint8_t *)data, size, ~0);
-    HAL_Delay(1);
+    my_sleep(100);
     HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_SET);
 }
 
@@ -101,7 +101,7 @@ void iris_config()
     hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
     hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
     hspi5.Init.NSS = SPI_NSS_SOFT;
-    hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+    hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
     hspi5.Init.FirstBit = SPI_FIRSTBIT_MSB;
     hspi5.Init.TIMode = SPI_TIMODE_DISABLE;
     hspi5.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -129,28 +129,10 @@ void iris_transmit(const uint8_t *data, uint32_t size)
     {
         return;
     }
-    uint32_t packets_per_frame = (size + IRIS_PACKET_PAYLOAD_SIZE - 1U) / IRIS_PACKET_PAYLOAD_SIZE;
-    printf("total_size: %lu bytes, packets: %lu\n", size, packets_per_frame);
-    iris_packet_t packet;
-
-    for (uint32_t packet_index = 0; packet_index < packets_per_frame; packet_index++)
-    {
-        uint32_t offset = packet_index * IRIS_PACKET_PAYLOAD_SIZE;
-        uint32_t chunk_size = size - offset;
-        if (chunk_size > IRIS_PACKET_PAYLOAD_SIZE)
-        {
-            chunk_size = IRIS_PACKET_PAYLOAD_SIZE;
-        }
-
-        packet.frame_index = iris_frame_index;
-        packet.packet_index = packet_index;
-        packet.packets_per_frame = packets_per_frame;
-        memset(packet.payload, 0, sizeof(packet.payload));
-        memcpy(packet.payload, data + offset, chunk_size);  
-        printf("transmitting frame %lu, packet %lu/%lu, chunk size: %lu bytes, %u\n", packet.frame_index, packet.packet_index, packet.packets_per_frame, chunk_size, sizeof(packet));
-        iris_transmit_raw((const uint8_t *)&packet, (uint16_t)sizeof(packet));
-        HAL_Delay(50);
-    }
-
-    iris_frame_index++;
+    size = 1000;
+    iris_transmit_raw((const uint8_t *)&size, (uint16_t)sizeof(uint32_t));
+    HAL_Delay(1);
+    iris_transmit_raw(data, (uint16_t)size);
+    printf("%u,%u,%u\n", size, data[0], data[size-1]);
+    
 }
