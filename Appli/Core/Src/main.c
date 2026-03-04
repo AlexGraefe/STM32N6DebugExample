@@ -62,9 +62,9 @@ CLASSES_TABLE;
 #endif
 
 // venc parts
-#define FRAMERATE 1 // 30
-#define VENC_WIDTH    480
-#define VENC_HEIGHT   480
+#define FRAMERATE 10 // 30
+#define VENC_WIDTH    240
+#define VENC_HEIGHT   240
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
 uint32_t img_addr = 0;
@@ -123,21 +123,24 @@ int main(void)
   PRINTF_START("VENC Init");
   LL_VENC_Init();
   encoder_prepare(VENC_WIDTH, VENC_HEIGHT, FRAMERATE, output_buffer);
+  const uint8_t *encoded_frame = encoder_get_last_frame_data();
+  uint32_t encoded_frame_size = encoder_get_last_frame_size();
+    if ((encoded_frame != NULL) && (encoded_frame_size > 0U)) {
+      iris_transmit(encoded_frame, encoded_frame_size);
+    } else {
+      printf("No encoded frame data available\n");
+    }
+  printf("Transmitting initial stream header with size %lu\n", encoded_frame_size);
   PRINTF_END("VENC Init");
 
   // CameraPipeline_DisplayPipe_Start(get_lcd_bg_buffer(), CMW_MODE_CONTINUOUS);
   CameraPipeline_SecondaryPipe_Start(secondary_pipe_buffer1,secondary_pipe_buffer2, CMW_MODE_CONTINUOUS);  // secondary_pipe_buffer1, secondary_pipe_buffer2, CMW_MODE_CONTINUOUS);
   img_addr = (uint32_t) secondary_pipe_buffer1;
-  printf("looool\n");
+  printf("Waiting 5s before SPI streaming...\n");
+  HAL_Delay(5000);
+  printf("Starting SPI streaming\n");
 
-  while (1) {
-    const uint8_t *encoded_frame = (uint8_t *) output_buffer;
-    uint32_t encoded_frame_size = 60000;
-    iris_transmit(encoded_frame, encoded_frame_size);
-    HAL_Delay(100);
-  }
-
-  while (!enc_end_reached())
+  while (1)
   {
     // if(BSP_CAMERA_BackgroundProcess() != BSP_ERROR_NONE)
     // {
@@ -153,30 +156,20 @@ int main(void)
     //   printf("%02x ", ((uint8_t *) img_addr)[la]);
     // }
     printf("\n");
-    Encode_frame(img_addr);
+    if (Encode_frame(img_addr) != 0) {
+      printf("Error encoding frame\n");
+      continue;
+    }
 
-    const uint8_t *encoded_frame = encoder_get_last_frame_data();
-    uint32_t encoded_frame_size = encoder_get_last_frame_size();
-    iris_transmit(encoded_frame, encoded_frame_size);
+    encoded_frame = encoder_get_last_frame_data();
+    encoded_frame_size = encoder_get_last_frame_size();
+    if ((encoded_frame != NULL) && (encoded_frame_size > 0U)) {
+      iris_transmit(encoded_frame, encoded_frame_size);
+    } else {
+      printf("No encoded frame data available\n");
+    }
     HAL_Delay(10);
   }
-  /* after encoding a certain nb of frames, end program */
-
-  if (encoder_end()) {
-    printf("Error ending encoder\n");
-  }
-  if (flush_out_buffer()) {
-    printf("Error flushing output buffer\n");
-  }
-  printf("finished encoding\n");
-
-    while (1)
-    {
-      CameraPipeline_IspUpdate();
-        // check if both are finished
-        while (cameraFrameReceived < 2) {};
-        cameraFrameReceived = 0;
-    }
 
 
   // while (1)
@@ -241,6 +234,7 @@ static void Hardware_init(void)
 
   PRINTF_START("IRIS Init");
   iris_config();
+  iris_handshake_blocking();
   PRINTF_END("IRIS Init");
 
   Fuse_Programming();

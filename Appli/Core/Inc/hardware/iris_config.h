@@ -7,6 +7,7 @@
 #define CS_GPIO_PORT GPIOA
 
 void iris_config();
+void iris_handshake_blocking();
 void iris_transmit(const uint8_t *data, uint32_t size);
 
 #endif /* SPI_CONFIG_H */

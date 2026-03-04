@@ -26,7 +26,7 @@
 /* Leave the driver use the default resolution */
 #define CAMERA_WIDTH  0
 #define CAMERA_HEIGHT 0
-#define CAMERA_FPS 30
+#define CAMERA_FPS 10
 
 extern int32_t cameraFrameReceived;
 extern uint8_t buf_index_changed;

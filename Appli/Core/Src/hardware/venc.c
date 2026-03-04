@@ -170,6 +170,8 @@ int encoder_prepare(uint32_t width, uint32_t height, int framerate, uint32_t * o
     return -1;
   }
   printf("stream started. saved %d bytes\n", encOut.streamSize);
+  last_frame_data = (uint8_t *)encIn.pOutBuf;
+  last_frame_size = encOut.streamSize;
   output_size+= encOut.streamSize;
   return 0;
 }

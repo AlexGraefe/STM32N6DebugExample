@@ -4,10 +4,12 @@
 #include "stm32n6xx_hal_gpio.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "timer.h"
 
 static SPI_HandleTypeDef hspi5;
+static const uint8_t iris_handshake_expected[4] = {255, 254, 253, 252};
 
 static void iris_transmit_raw(const uint8_t *data, uint16_t size)
 {
@@ -57,21 +59,21 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
         */
         GPIO_InitStruct.Pin = GPIO_PIN_15;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pull = GPIO_PULLDOWN;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
         HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
         GPIO_InitStruct.Pin = GPIO_PIN_8;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pull = GPIO_PULLDOWN;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
         HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
         GPIO_InitStruct.Pin = GPIO_PIN_2;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pull = GPIO_PULLDOWN;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
         HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
@@ -122,6 +124,41 @@ void iris_config()
     }
 }
 
+void iris_handshake_blocking()
+{
+    uint8_t tx_handshake[sizeof(iris_handshake_expected)];
+    uint8_t rx_handshake[sizeof(iris_handshake_expected)] = {0};
+
+    memcpy(tx_handshake, iris_handshake_expected, sizeof(tx_handshake));
+
+    while (1)
+    {
+        HAL_StatusTypeDef ret;
+
+        HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_RESET);
+        printf("rx_handshake: %02x %02x %02x %02x\n", rx_handshake[0], rx_handshake[1], rx_handshake[2], rx_handshake[3]);
+        my_sleep(100);
+        ret = HAL_SPI_TransmitReceive(&hspi5,
+                                      tx_handshake,
+                                      rx_handshake,
+                                      (uint16_t)sizeof(tx_handshake),
+                                      ~0);
+        my_sleep(100);
+        HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_SET);
+        printf("rx_handshake: %02x %02x %02x %02x\n", rx_handshake[0], rx_handshake[1], rx_handshake[2], rx_handshake[3]);
+
+        if ((ret == HAL_OK) &&
+            (memcmp(rx_handshake, iris_handshake_expected, sizeof(iris_handshake_expected)) == 0))
+        {
+            printf("IRIS SPI handshake complete\n");
+            return;
+        }
+
+        printf("IRIS SPI handshake retry\n");
+        HAL_Delay(500);
+    }
+}
+
 
 void iris_transmit(const uint8_t *data, uint32_t size)
 {
@@ -129,10 +166,14 @@ void iris_transmit(const uint8_t *data, uint32_t size)
     {
         return;
     }
-    size = 1000;
+    if (size > UINT16_MAX)
+    {
+        printf("IRIS SPI frame too large: %lu\n", (unsigned long)size);
+        return;
+    }
+
     iris_transmit_raw((const uint8_t *)&size, (uint16_t)sizeof(uint32_t));
     HAL_Delay(1);
     iris_transmit_raw(data, (uint16_t)size);
-    printf("%u,%u,%u\n", size, data[0], data[size-1]);
     
 }
