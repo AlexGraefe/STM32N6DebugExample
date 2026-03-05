@@ -63,8 +63,8 @@ CLASSES_TABLE;
 
 // venc parts
 #define FRAMERATE 10 // 30
-#define VENC_WIDTH    240
-#define VENC_HEIGHT   240
+#define VENC_WIDTH    144
+#define VENC_HEIGHT   96
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
 uint32_t img_addr = 0;

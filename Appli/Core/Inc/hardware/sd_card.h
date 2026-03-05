@@ -3,6 +3,8 @@
 
 #include "stm32n6xx_hal.h"
 
+#define SD_CARD_ENABLE 0
+
 /* Each write = 512 Blocks of 512 Bytes */
 #define BLOCK_SIZE         (512) /* 1 Block = 512 Bytes */
 #define NB_BLOCKS_TO_WRITE (256)  /* Write 128 Blocks at once*/

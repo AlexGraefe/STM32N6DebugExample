@@ -20,6 +20,7 @@ size_t SD_index = 0;
 * @retval err error code. 0 On success.
 */
 int save_stream(uint32_t offset, uint32_t * buf, size_t size){
+#if SD_CARD_ENABLE
   int err = 0;
   size += 15; /* Alignment*/
   size = size / sizeof(uint32_t);
@@ -42,13 +43,20 @@ int save_stream(uint32_t offset, uint32_t * buf, size_t size){
     }
   }
   return err;
+#else
+  return 0;
+#endif
 }
 
 int flush_out_buffer(void){
+#if SD_CARD_ENABLE
   if(BSP_SD_WriteBlocks(0, (uint32_t *) curr_buf, SD_index, NB_BLOCKS_TO_WRITE)!= BSP_ERROR_NONE){
         return -1;
       }
   return 0;
+#else
+  return 0;
+#endif
 }
 
 /**
@@ -56,6 +64,7 @@ int flush_out_buffer(void){
 * @retval err error code. 0 On success.
 */
 int erase_enc_output(void){
+#if SD_CARD_ENABLE
   /* Erase beginning of SDCard */
   if (BSP_SD_Erase(0, 0, NB_BLOCKS_ERASED) != BSP_ERROR_NONE)
   {
@@ -63,10 +72,14 @@ int erase_enc_output(void){
     return -1;
   }
   return 0;
+#else
+  return 0;
+#endif
 }
 
 void SD_Card_Init(void)
 {
+#if SD_CARD_ENABLE
   /* Initialize SD Card */
   if (BSP_SD_Init(0) != BSP_ERROR_NONE){
     printf("error initializing SD Card\n");
@@ -85,5 +98,5 @@ void SD_Card_Init(void)
   /* wait for erase operation to be done */
   while(BSP_SD_GetCardState(0) != SD_TRANSFER_OK);
 #endif
-
+#endif
 }
