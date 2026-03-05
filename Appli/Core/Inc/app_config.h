@@ -38,6 +38,17 @@
 #define COLOR_RGB (1)
 #define COLOR_MODE    COLOR_RGB
 
+/* Runtime / HW settings */
+#define APP_CAMERA_FPS                     (10)
+#define APP_VENC_WIDTH                     (144)
+#define APP_VENC_HEIGHT                    (96)
+#define APP_VENC_FRAMERATE                 (APP_CAMERA_FPS)
+#define APP_SECONDARY_PIPE_BPP             (2)
+#define APP_SECONDARY_PIPE_BUFFER_SIZE     (APP_VENC_WIDTH * APP_VENC_HEIGHT * APP_SECONDARY_PIPE_BPP)
+#define APP_VENC_OUTPUT_BUFFER_WORDS       (APP_VENC_WIDTH * APP_VENC_HEIGHT / 8)
+#define APP_IRIS_SPI_BAUDRATE_PRESCALER    SPI_BAUDRATEPRESCALER_16
+#define APP_STREAM_LOOP_DELAY_MS           (10)
+
 /* Classes */
 #define NB_CLASSES   (1)
 #define CLASSES_TABLE const char* classes_table[NB_CLASSES] = {\

@@ -93,7 +93,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32n6xx_it.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/gcc/startup_stm32n657xx.s
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/app_fuseprogramming.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/fuseprogramming.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/app_camerapipeline.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/crop_img.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32_lcd_ex.c

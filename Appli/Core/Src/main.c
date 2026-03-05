@@ -21,6 +21,7 @@
 #include "console.h"
 #include "timer.h"
 #include "iris.h"
+#include "fuseprogramming.h"
 #include "gpio.h"
 #include "iac.h"
 #include "mylcd.h"
@@ -39,7 +40,6 @@
 #include "stm32n6570_discovery_sd.h"
 #include "stm32n6570_discovery.h"
 #include "stm32_lcd.h"
-#include "app_fuseprogramming.h"
 #include "stm32_lcd_ex.h"
 
 #include "h264encapi.h"
@@ -61,15 +61,11 @@ CLASSES_TABLE;
 #define APP_VERSION_STRING "unversioned"
 #endif
 
-// venc parts
-#define FRAMERATE 10 // 30
-#define VENC_WIDTH    144
-#define VENC_HEIGHT   96
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
 uint32_t img_addr = 0;
 
-uint32_t output_buffer[VENC_WIDTH * VENC_HEIGHT / 8] __NON_CACHEABLE __attribute__((aligned(8))); // __NON_CACHEABLE
+uint32_t output_buffer[APP_VENC_OUTPUT_BUFFER_WORDS] __NON_CACHEABLE __attribute__((aligned(8))); // __NON_CACHEABLE
 
 
 volatile int32_t cameraFrameReceived;
@@ -79,11 +75,11 @@ void* pp_input;
 
 // __attribute__ ((section (".psram_bss")))
 // __attribute__ ((aligned (32)))
-uint8_t secondary_pipe_buffer1[VENC_WIDTH * VENC_HEIGHT * 2] __NON_CACHEABLE __attribute__ ((aligned (32))); // needs to be aligned on 32 bytes for DCMIPP output buffer
+uint8_t secondary_pipe_buffer1[APP_SECONDARY_PIPE_BUFFER_SIZE] __NON_CACHEABLE __attribute__ ((aligned (32))); // needs to be aligned on 32 bytes for DCMIPP output buffer
 
 // __attribute__ ((section (".psram_bss")))
 // __attribute__ ((aligned (32)))
-uint8_t secondary_pipe_buffer2[VENC_WIDTH * VENC_HEIGHT * 2] __NON_CACHEABLE __attribute__ ((aligned (32))); // needs to be aligned on 32 bytes for DCMIPP output buffer
+uint8_t secondary_pipe_buffer2[APP_SECONDARY_PIPE_BUFFER_SIZE] __NON_CACHEABLE __attribute__ ((aligned (32))); // needs to be aligned on 32 bytes for DCMIPP output buffer
 
 extern DCMIPP_HandleTypeDef hcamera_dcmipp;
 
@@ -113,7 +109,7 @@ int main(void)
   printf("========================================\n\n");
 
   PRINTF_START("Camera Init");
-  CameraPipeline_Init(&(get_lcd_lcd_bg_area()->XSize), &(get_lcd_lcd_bg_area()->YSize), VENC_WIDTH, VENC_HEIGHT);
+  CameraPipeline_Init(&(get_lcd_lcd_bg_area()->XSize), &(get_lcd_lcd_bg_area()->YSize), APP_VENC_WIDTH, APP_VENC_HEIGHT);
   PRINTF_END("Camera Init");
 
   PRINTF_START("LCD Init");
@@ -122,7 +118,7 @@ int main(void)
 
   PRINTF_START("VENC Init");
   LL_VENC_Init();
-  encoder_prepare(VENC_WIDTH, VENC_HEIGHT, FRAMERATE, output_buffer);
+  encoder_prepare(APP_VENC_WIDTH, APP_VENC_HEIGHT, APP_VENC_FRAMERATE, output_buffer);
   const uint8_t *encoded_frame = encoder_get_last_frame_data();
   uint32_t encoded_frame_size = encoder_get_last_frame_size();
     if ((encoded_frame != NULL) && (encoded_frame_size > 0U)) {
@@ -130,7 +126,7 @@ int main(void)
     } else {
       printf("No encoded frame data available\n");
     }
-  printf("Transmitting initial stream header with size %lu\n", encoded_frame_size);
+  printf("Transmitting initial stream header with size %lu\n", (unsigned long)encoded_frame_size);
   PRINTF_END("VENC Init");
 
   // CameraPipeline_DisplayPipe_Start(get_lcd_bg_buffer(), CMW_MODE_CONTINUOUS);
@@ -152,7 +148,7 @@ int main(void)
     };
     /* new frame available */
     buf_index_changed = 0;
-    // for (uint32_t la = VENC_WIDTH*VENC_HEIGHT*2-10; la < VENC_WIDTH*VENC_HEIGHT*2; la++) {
+    // for (uint32_t la = APP_SECONDARY_PIPE_BUFFER_SIZE-10; la < APP_SECONDARY_PIPE_BUFFER_SIZE; la++) {
     //   printf("%02x ", ((uint8_t *) img_addr)[la]);
     // }
     printf("\n");
@@ -168,7 +164,7 @@ int main(void)
     } else {
       printf("No encoded frame data available\n");
     }
-    HAL_Delay(10);
+    HAL_Delay(APP_STREAM_LOOP_DELAY_MS);
   }
 
 

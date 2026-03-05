@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "timer.h"
+#include "app_config.h"
 
 static SPI_HandleTypeDef hspi5;
 static const uint8_t iris_handshake_expected[4] = {255, 254, 253, 252};
@@ -103,7 +104,7 @@ void iris_config()
     hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
     hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
     hspi5.Init.NSS = SPI_NSS_SOFT;
-    hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+    hspi5.Init.BaudRatePrescaler = APP_IRIS_SPI_BAUDRATE_PRESCALER;
     hspi5.Init.FirstBit = SPI_FIRSTBIT_MSB;
     hspi5.Init.TIMode = SPI_TIMODE_DISABLE;
     hspi5.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

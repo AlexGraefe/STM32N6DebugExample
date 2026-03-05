@@ -26,7 +26,6 @@
 /* Leave the driver use the default resolution */
 #define CAMERA_WIDTH  0
 #define CAMERA_HEIGHT 0
-#define CAMERA_FPS 10
 
 extern int32_t cameraFrameReceived;
 extern uint8_t buf_index_changed;
@@ -75,8 +74,8 @@ static void DCMIPP_PipeInitDisplay(CMW_CameraInit_t *camConf, uint32_t *bg_width
   // first pipeconfiguration is for the display.
   ret = CMW_CAMERA_SetPipeConfig(DCMIPP_PIPE2, &dcmipp_conf, &pitch);
   printf("Display pipe configured: output %lux%lu, format %d, bpp %d, mode %d\r\n",
-         dcmipp_conf.output_width,
-         dcmipp_conf.output_height,
+      (unsigned long)dcmipp_conf.output_width,
+      (unsigned long)dcmipp_conf.output_height,
          dcmipp_conf.output_format,
          dcmipp_conf.output_bpp,
          dcmipp_conf.mode);
@@ -127,7 +126,7 @@ void CameraPipeline_Init(uint32_t *lcd_bg_width, uint32_t *lcd_bg_height, int se
 
   cam_conf.width = CAMERA_WIDTH;
   cam_conf.height = CAMERA_HEIGHT;
-  cam_conf.fps = CAMERA_FPS;
+  cam_conf.fps = APP_CAMERA_FPS;
   cam_conf.mirror_flip = CAMERA_FLIP;
 
   // this determines the connected camera sensor
