@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "sd_card.h"
+#include "app_config.h"
 #include "stm32n6570_discovery_sd.h"
 
 uint32_t sd_buf1[NB_WORDS_TO_WRITE] __NON_CACHEABLE; 
@@ -19,7 +20,7 @@ size_t SD_index = 0;
 * @param  size  size (in bytes) of the buffer to save
 * @retval err error code. 0 On success.
 */
-int save_stream(uint32_t offset, uint32_t * buf, size_t size){
+int save_stream(uint32_t offset, const uint32_t *buf, size_t size){
 #if SD_CARD_ENABLE
   int err = 0;
   size += 15; /* Alignment*/

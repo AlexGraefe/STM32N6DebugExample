@@ -4,13 +4,11 @@
 
 
 #include "venc.h"
-#include "sd_card.h"
 
 H264EncIn encIn= {0};
 H264EncOut encOut= {0};
 H264EncInst encoder= {0};
 H264EncConfig cfg= {0};
-uint32_t output_size = 0;
 EWLLinearMem_t outbuf;
 static int frame_nb = 0;
 static uint8_t *last_frame_data = NULL;
@@ -44,23 +42,9 @@ int Encode_frame(uint32_t img_addr){
   switch (ret)
   {
   case H264ENC_FRAME_READY:
-    /*save stream */
     printf("encoded frame %d - size : %d bytes\n", frame_nb, encOut.streamSize);
     last_frame_data = (uint8_t *)encIn.pOutBuf;
     last_frame_size = encOut.streamSize;
-    // SCB_CleanInvalidateDCache_by_Addr(encIn.pOutBuf, encOut.streamSize);
-    if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
-    {
-      printf("error saving stream frame %d\n", frame_nb);
-      return -1;
-    }
-    // for (int i = 0; i < encOut.streamSize; i++) {
-    //   printf("%02x, ", ((uint8_t*)encIn.pOutBuf)[i]);
-    //   if ((i + 1) % 16 == 0) printf("\n");
-    // }
-    // printf("\n");
-    // while (1) {};
-    output_size += encOut.streamSize;
     break;
   case H264ENC_SYSTEM_ERROR:
     printf("fatal error while encoding\n");
@@ -158,42 +142,25 @@ int encoder_prepare(uint32_t width, uint32_t height, int framerate, uint32_t * o
     return -1;
   }
   printf("stream started. saved %d bytes\n", encOut.streamSize);
-    //   for (int i = 0; i < encOut.streamSize; i++) {
-    //   printf("%02x, ", ((uint8_t*)encIn.pOutBuf)[i]);
-    //   if ((i + 1) % 16 == 0) printf("\n");
-    // }
-  /* save the stream header */
-  printf("%d\n", encOut.streamSize);
-  if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
-  {
-    printf("error saving stream\n");
-    return -1;
-  }
+
+  /* expose stream header for the caller */
   printf("stream started. saved %d bytes\n", encOut.streamSize);
   last_frame_data = (uint8_t *)encIn.pOutBuf;
   last_frame_size = encOut.streamSize;
-  output_size+= encOut.streamSize;
   return 0;
 }
 
 int encoder_end(void){
   int ret = H264EncStrmEnd(encoder, &encIn, &encOut);
-  printf("done encoding %d frames. size : %d - Blocks : %d\n",frame_nb ,output_size, (output_size+511)/512);
+  printf("done encoding %d frames\n", frame_nb);
   if (ret != H264ENC_OK)
   {
     printf("error ending encoder %d\n", ret);
     return -1;
   }
-  else
-  {
-    /* save stream tail */
-    if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
-    {
-      printf("error saving stream\n");
-      return -1;
-    }
-    output_size+=encOut.streamSize;
-  }
+
+  last_frame_data = (uint8_t *)encIn.pOutBuf;
+  last_frame_size = encOut.streamSize;
 
   return 0;
 }

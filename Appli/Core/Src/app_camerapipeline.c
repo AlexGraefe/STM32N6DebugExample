@@ -74,8 +74,8 @@ static void DCMIPP_PipeInitDisplay(CMW_CameraInit_t *camConf, uint32_t *bg_width
   // first pipeconfiguration is for the display.
   ret = CMW_CAMERA_SetPipeConfig(DCMIPP_PIPE2, &dcmipp_conf, &pitch);
   printf("Display pipe configured: output %lux%lu, format %d, bpp %d, mode %d\r\n",
-      (unsigned long)dcmipp_conf.output_width,
-      (unsigned long)dcmipp_conf.output_height,
+         dcmipp_conf.output_width,
+         dcmipp_conf.output_height,
          dcmipp_conf.output_format,
          dcmipp_conf.output_bpp,
          dcmipp_conf.mode);
@@ -104,7 +104,7 @@ static void DCMIPP_PipeInitSecondary(int width, int height)
 
   dcmipp_conf.output_width = width;
   dcmipp_conf.output_height = height;
-  dcmipp_conf.output_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;  // DCMIPP_PIXEL_PACKER_FORMAT_RGB888_YUV444_1;
+  dcmipp_conf.output_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;
   dcmipp_conf.output_bpp = 2;
   dcmipp_conf.mode = aspect_ratio;
   dcmipp_conf.enable_swap = COLOR_MODE;
@@ -194,7 +194,6 @@ int CMW_CAMERA_PIPE_FrameEventCallback(uint32_t pipe)
     case DCMIPP_PIPE1 :
       cameraFrameReceived++;
       img_addr = DCMIPP->P1STM0AR;
-      // printf("%d, %d\n", buf_index_changed, cameraFrameReceived);
       buf_index_changed = 1;
       break;
       

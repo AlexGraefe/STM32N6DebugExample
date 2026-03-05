@@ -49,6 +49,14 @@
 #define APP_IRIS_SPI_BAUDRATE_PRESCALER    SPI_BAUDRATEPRESCALER_16
 #define APP_STREAM_LOOP_DELAY_MS           (10)
 
+/* SD Card */
+#define SD_CARD_ENABLE 0
+#define BLOCK_SIZE         (512) /* 1 Block = 512 Bytes */
+#define NB_BLOCKS_TO_WRITE (256)  /* Write 128 Blocks at once*/
+#define NB_BYTES_TO_WRITE (NB_BLOCKS_TO_WRITE*BLOCK_SIZE)
+#define NB_WORDS_TO_WRITE (NB_BYTES_TO_WRITE/4)
+#define NB_BLOCKS_ERASED  (1024*1024) /*Erase 512 MBytes = 512*1024*1024 */
+
 /* Classes */
 #define NB_CLASSES   (1)
 #define CLASSES_TABLE const char* classes_table[NB_CLASSES] = {\
