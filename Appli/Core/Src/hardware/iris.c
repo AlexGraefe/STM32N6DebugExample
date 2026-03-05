@@ -1,4 +1,4 @@
-#include "iris_config.h"
+#include "iris.h"
 #include "stm32_hal_legacy.h"
 #include "stm32n6xx.h"
 #include "stm32n6xx_hal_gpio.h"

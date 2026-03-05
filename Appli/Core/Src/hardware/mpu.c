@@ -1,4 +1,4 @@
-#include "mpu_config.h"
+#include "mpu.h"
 
 #if defined(__ICCARM__)
 #pragma section="HEAP"

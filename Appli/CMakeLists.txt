@@ -98,16 +98,16 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/crop_img.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/stm32_lcd_ex.c
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/console_config.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iris_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/console.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iris.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/timer.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/gpio_config.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iac_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/gpio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/iac.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/lcd.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/mpu_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/mpu.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/sd_card.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/security_config.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/system_clock_config.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/security.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/system_clock.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/hardware/venc.c
 
     # ${CMAKE_CURRENT_SOURCE_DIR}/Model/network.c

@@ -18,18 +18,18 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "console_config.h"
+#include "console.h"
 #include "timer.h"
-#include "iris_config.h"
-#include "gpio_config.h"
-#include "iac_config.h"
+#include "iris.h"
+#include "gpio.h"
+#include "iac.h"
 #include "mylcd.h"
-#include "mpu_config.h"
+#include "mpu.h"
 #include "sd_card.h"
-#include "security_config.h"
+#include "security.h"
 #include "stm32n6xx_hal.h"
 #include "stm32n6xx_hal_spi.h"
-#include "system_clock_config.h"
+#include "system_clock.h"
 #include "venc.h"
 
 #include "cmw_camera.h"

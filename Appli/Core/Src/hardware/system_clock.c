@@ -1,6 +1,6 @@
 #include "stm32n6570_discovery.h"
 
-#include "system_clock_config.h"
+#include "system_clock.h"
 
 void SystemClock_Config(void)
 {

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "console_config.h"
+#include "console.h"
 
 static UART_HandleTypeDef huart1;
 

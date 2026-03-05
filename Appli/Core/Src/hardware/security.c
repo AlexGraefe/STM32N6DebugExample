@@ -1,4 +1,4 @@
-#include "security_config.h"
+#include "security.h"
 
 void Security_Config(void)
 {

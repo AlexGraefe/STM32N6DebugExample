@@ -1,4 +1,4 @@
-#include "iac_config.h"
+#include "iac.h"
 
 void IAC_Config(void)
 {
