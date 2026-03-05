@@ -167,7 +167,7 @@ int main(void)
     } else {
       printf("No encoded frame data available\n");
     }
-    HAL_Delay(APP_STREAM_LOOP_DELAY_MS);
+    // HAL_Delay(APP_STREAM_LOOP_DELAY_MS);
   }
 
 

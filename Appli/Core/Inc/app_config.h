@@ -39,7 +39,7 @@
 #define COLOR_MODE    COLOR_RGB
 
 /* Runtime / HW settings */
-#define APP_CAMERA_FPS                     (10)
+#define APP_CAMERA_FPS                     (30)
 #define APP_VENC_WIDTH                     (144)
 #define APP_VENC_HEIGHT                    (96)
 #define APP_VENC_FRAMERATE                 (APP_CAMERA_FPS)

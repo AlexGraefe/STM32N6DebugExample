@@ -1,6 +1,7 @@
 #include "iris.h"
 #include "stm32_hal_legacy.h"
 #include "stm32n6xx.h"
+#include "stm32n6xx_hal.h"
 #include "stm32n6xx_hal_gpio.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -11,6 +12,7 @@
 
 static SPI_HandleTypeDef hspi5;
 static const uint8_t iris_handshake_expected[4] = {255, 254, 253, 252};
+static uint32_t iris_frame_nmbr = 0U;
 
 static void iris_transmit_raw(const uint8_t *data, uint16_t size)
 {
@@ -162,18 +164,65 @@ void iris_handshake_blocking()
 
 void iris_transmit(const uint8_t *data, uint32_t size)
 {
+    iris_frame_nmbr++;
+    uint32_t packet_nmbr;
+
     if ((data == NULL) || (size == 0U))
     {
         return;
     }
-    if (size > UINT16_MAX)
+
+    packet_nmbr = (size + IRIS_PACKET_PAYLOAD_SIZE - 1U) / IRIS_PACKET_PAYLOAD_SIZE;
+    if (packet_nmbr == 0U)
     {
-        printf("IRIS SPI frame too large: %lu\n", (unsigned long)size);
         return;
     }
 
-    iris_transmit_raw((const uint8_t *)&size, (uint16_t)sizeof(uint32_t));
-    HAL_Delay(1);
-    iris_transmit_raw(data, (uint16_t)size);
-    
+    for (uint32_t packet_idx = 0U; packet_idx < packet_nmbr; packet_idx++)
+    {
+        iris_packet_t pkt;
+        uint32_t offset = packet_idx * IRIS_PACKET_PAYLOAD_SIZE;
+        uint32_t remaining = size - offset;
+        uint32_t chunk_len = (remaining > IRIS_PACKET_PAYLOAD_SIZE) ? IRIS_PACKET_PAYLOAD_SIZE : remaining;
+
+        pkt.frame_nmbr = iris_frame_nmbr;
+        pkt.packet_idx = packet_idx;
+        pkt.packet_nmbr = packet_nmbr;
+
+        memset(pkt.payload, 0, sizeof(pkt.payload));
+        memcpy(pkt.payload, &data[offset], chunk_len);
+
+        iris_transmit_raw((const uint8_t *)&pkt, (uint16_t)sizeof(pkt));
+        my_sleep(100);
+
+    }
 }
+
+// uint32_t packet_nmbr = DIV_ROUND_UP(rx_size, IRIS_PACKET_PAYLOAD_SIZE);
+// 		for (uint32_t packet_idx = 0; packet_idx < packet_nmbr; packet_idx++) {
+// 			iris_packet_t pkt = {
+// 				.frame_nmbr = frame_nmbr,
+// 				.packet_idx = packet_idx,
+// 				.packet_nmbr = packet_nmbr,
+// 			};
+
+// 			size_t offset = packet_idx * IRIS_PACKET_PAYLOAD_SIZE;
+// 			size_t chunk_len = MIN((size_t)IRIS_PACKET_PAYLOAD_SIZE,
+// 					       (size_t)(rx_size - offset));
+
+// 			memset(pkt.payload, 0, sizeof(pkt.payload));
+// 			memcpy(pkt.payload, &spi_buffer[offset], chunk_len);
+
+// 			/* Unique step color: UDP packet send */
+// 			LED_TURN_RED();
+// 			ret = zsock_sendto(ctx->sock_fd, &pkt, sizeof(pkt), 0,
+// 					   &ctx->client_addr, ctx->client_addr_len);
+// 			if (ret < 0) {
+// 				LOG_ERR("UDP sendto failed frame=%u packet=%u (errno=%d)",
+// 					frame_nmbr, packet_idx, errno);
+// 				return COMM_FAILURE;
+// 			}
+// 		}
+
+// 		LOG_INF("Frame %u: %u bytes sent in %u packet(s)",
+// 			frame_nmbr, rx_size, packet_nmbr);
